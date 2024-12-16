@@ -1,0 +1,22 @@
+---
+- name: Get MicroK8s version
+  hosts: set1
+  become: yes
+  tasks:
+    - name: Ensure MicroK8s is installed
+      command: which microk8s
+      register: microk8s_installed
+      ignore_errors: yes
+
+    - name: Fail if MicroK8s is not installed
+      fail:
+        msg: "MicroK8s is not installed on this server."
+      when: microk8s_installed.rc != 0
+
+    - name: Get MicroK8s version
+      command: microk8s version
+      register: microk8s_version
+
+    - name: Show MicroK8s version
+      debug:
+        msg: "MicroK8s version: {{ microk8s_version.stdout }}"
